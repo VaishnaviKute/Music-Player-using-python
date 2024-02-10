@@ -1,0 +1,199 @@
+#settings up the screen------------------------
+from tkinter import *
+#inserting images
+from PIL import Image, ImageTk
+
+#inserting music files---
+from pygame import mixer
+mixer.init()
+
+#creating a menu bar about function---
+import tkinter.messagebox
+
+#creating a open submenu bar for music files---
+from tkinter import filedialog
+
+#music labels name--- 
+import os
+
+#creating a length of the music bar---
+from mutagen.mp3 import MP3 #installed mutagen
+import time
+
+#vedio animation in the screen----
+#import tkinter as tk
+#from tkVideoPlayer import TkinterVideo
+
+#this function is for building a default screen 
+#screen=Tk()
+#screen.mainloop()
+
+#placed all the things in the screen by using class methods
+class musicplayer:
+    def __init__(self,Tk):
+        self.screen=Tk
+        self.screen.title('MusicPlayer')
+        self.screen.geometry('625x420')
+        self.screen.configure(background="black")
+        
+        #menu nav bar---
+        self.menubar=Menu(self.screen)
+        self.screen.configure(menu=self.menubar)
+        
+        #opening a music file----
+        def Openfile():
+            global filename
+            filename=filedialog.askopenfilename()
+            
+        #submenu bar---
+        self.submenu=Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label='File', menu=self.submenu) 
+        self.submenu.add_command(label='Open', command=Openfile)
+        self.submenu.add_command(label='Exit', command=self.screen.destroy)
+        
+        #creating the function of about---
+        def About():
+            tkinter.messagebox.showinfo('About Us','This is the project of music Player using python by CodeClauseS')
+        
+        self.submenu=Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label='Help', menu=self.submenu) 
+        self.submenu.add_command(label='About', command=About)
+        
+        #Adding label------
+        self.filelabel=Label(text='Music Player', bg='black', fg='white', font=22)
+        self.filelabel.place(x=15, y=27)
+        # self.text.pack(side=TOP, fill=X)
+        
+        #adding a label function for the music player---
+        def songinfo():
+            self.filelabel['text']='Current Music :- ' + os.path.basename(filename)
+        
+        #Adding background images---
+        self.background =ImageTk.PhotoImage(file='bg_img.png')
+        background=Label(self.screen, image=self.background, bg='black').place(y=65)
+        #self.background.pack(fill=X)
+        
+        #Adding images---
+        self.photo=ImageTk.PhotoImage(file="5.png") 
+        #self.photo.geometry('250x250')
+        photo=Label(self.screen,image=self.photo, bg="white").place(x=20,y=60)
+        #self.label1.pack(fill=X)
+        
+        #label_bottom_text---
+        self.label1=Label(self.screen,text='Lets Play It', bg='black', fg='white', font=20)
+        self.label1.pack(side=BOTTOM, fill=X)
+        
+        # creating a fun for music length in screen---
+        def music_len():
+            # #current time is starting from zero---
+            # current_time=mixer.music.get_pos()/1000
+            # #current time in minutes... and seconds...---
+            # convert_current_time=time.strftime('%M:%S', time.gmtime(current_time))
+            
+            #Select mp3 songs---
+            song_select=MP3(filename)
+            #get length of songs---
+            song_select_length=song_select.info.length
+            #convert into min and seconds
+            convert_song_select_length=time.strftime('%M:%S', time.gmtime(song_select_length))
+            print(convert_song_select_length)
+            
+            #blit on screen---
+            #self.blit_on_screen.config(text=f'Duration:-00:{convert_song_select_length}')
+            
+            
+        #label for music length bar in the screen---
+        #self.music_length_bar=Label(self.screen, text='Duration:-00:00', font=20, bg='black', fg='white')
+        #self.music_length_bar.place(x=20, y=305)
+        
+        #creating a function for play_buttons----
+        def playmusic():
+            try:
+                paused
+            except NameError:
+                
+                try:
+                    mixer.music.load(filename)
+                    mixer.music.play()
+                    self.label1['text']='Music playing...'
+                    songinfo()
+                    # music_len()
+                    
+                except:
+                    tkinter.messagebox.showerror('Error', 'File Could Not Found, Please try again...')
+            else:
+                mixer.music.unpause()
+                self.label1['text']='Playing_again...'
+        
+        #Creating buttons for music
+        #play_button
+        self.photo_btn_play=ImageTk.PhotoImage(file="playbtn.png")
+        photo_btn_play=Button(self.screen,image=self.photo_btn_play, bd=1, bg='white', command=playmusic).place(x=20,y=310)
+        
+        #creating a function for pause_botton---
+        def pausemusic():
+            global paused
+            paused=True
+            mixer.music.pause()
+            self.label1['text']='Music_paused...'
+            
+        
+        #Creating buttons for music
+        #pause_button----
+        self.photo_btn_pause=ImageTk.PhotoImage(file="pausebtn.png")
+        photo_btn_pause=Button(self.screen,image=self.photo_btn_pause, bg='white', bd='1', command=pausemusic).place(x=90,y=310)
+        
+        #Creating Next Button for music
+        
+        
+        # #creating a function for stop music----
+        # def stopmusic():
+        #     global paused
+        #     paused=True
+        #     mixer.music.stop()
+        #     self.label1['text']='Music_stopped'   
+              
+        # #Creating buttons for music
+        # #stop_button----
+        # self.photo_btn_stop=ImageTk.PhotoImage(file="C:\\Users\\chand\\OneDrive\\Desktop\\python project\\images\\stopbtn.png")
+        # photo_btn_stop=Button(self.screen,image=self.photo_btn_stop, bd=0,  bg='white', command=stopmusic).place(x=150,y=300)
+        
+        # Vedio Animation in the screen---
+#player = tkvideo("C:\\path\\to\\video.mp4", my_label, loop = 1, size = (1280,720))
+#player.play() 
+#videoplayer = TkinterVideo(master=screen, scaled=True)
+#videoplayer.load(r".mp4")
+#videoplayer.pack(expand=True, fill="both")
+#videoplayer.play() 
+      
+        #sound mute button_function---
+        def Mutebtn():
+            self.vol_bar.set(0)
+            self.Mutebtn=ImageTk.PhotoImage(file='Mutebtn.PNG')
+            Mutebtn=Button(self.screen, image=self.Mutebtn, command=Unmutebtn).place(x=350, y=250)
+            
+        #sound unmute button_function---
+        def Unmutebtn():
+            self.vol_bar.set(30)
+            self.Unmutebtn=ImageTk.PhotoImage(file='vol.PNG')
+            Unmutebtn=Button(self.screen, image=self.Unmutebtn, command=Mutebtn).place(x=350, y=250)
+            
+        #Volume bar img---
+        self.muteV=ImageTk.PhotoImage(file='vol.PNG')
+        muteV=Button(self.screen, image=self.muteV, bd=1, command=Mutebtn).place(x=350, y=250)
+        
+        #function for volume bar---
+        def volumeBar(vol):
+            volumeBar=int(vol)/100
+            mixer.music.set_volume(volumeBar) 
+        
+        #volume bar---
+        self.vol_bar=Scale(self.screen, from_=100, to=0, bg='purple', fg='white', length=170, command=volumeBar)
+        self.vol_bar.set(30)
+        self.vol_bar.place(x=350,y=65)
+       
+        
+               
+screen=Tk()
+obj=musicplayer(screen)
+screen.mainloop()
